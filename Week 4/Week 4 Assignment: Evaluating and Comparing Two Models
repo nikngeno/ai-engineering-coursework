@@ -1,0 +1,181 @@
+# Week 4 Assignment: Evaluating and Comparing Two Models
+
+## Overview
+
+This week you'll put Chapters 3 and 4 into practice. You'll run the same set of support tickets through two different models, score the results by hand, and decide which model you'd choose. In a Production level project you'd want to build a pipeline to run these evaluations, but out goal for this assignment is to see firsthand how different models respond to the same query.
+
+
+### The Sample Task: Support Ticket Triage
+
+The model reads one support ticket and classifies it as JSON:
+
+```json
+{"category": "billing", "urgency": "high", "needs_human": true}
+```
+
+- `category`: one of `billing`, `technical`, `account_access`, `feature_request`, `other`
+- `urgency`: one of `low`, `medium`, `high`
+- `needs_human`: true if the ticket needs a human agent rather than an automated reply
+
+---
+
+## How to Submit
+
+Fill out this file, commit it to the same GitHub repo we've been using under a new folder, and submit the link to Moodle.
+
+---
+
+## Part 1: Set Up Your Comparison
+
+Choose two models that differ in a way worth comparing: two sizes, two providers, etc.
+
+| | Model | Provider | Why you picked it |
+|---|---|---|---|
+| Model A | _____ | _____ | _____ |
+| Model B | _____ | _____ | _____ |
+
+Write one prompt for the task and use it, unchanged, for both models on every ticket. If the prompt varies between models, you won't know whether a difference in results came from the model or the prompt. Keep the prompt simple; tuning it isn't the goal this week as that will be part of our next weeks topic. You will need to include enough details though that the model knows what should be returned, given a support ticket.
+
+```
+[Paste the prompt you'll use for both models]
+```
+
+---
+
+## Part 2: Define Your Criteria
+
+Write three evaluation criteria for this task. At least one should be about something other than raw correctness, such as speed or how clean the output format is. Give a measurement method for each and the threshold you'd consider good enough to ship.
+
+Set the thresholds now, before you run anything. Deciding what counts as success after you've seen the results defeats the purpose.
+
+| # | Criterion | How you'd measure it | "Good enough" threshold |
+|---|---|---|---|
+| 1 | _____ | _____ | _____ |
+| 2 | _____ | _____ | _____ |
+| 3 | _____ | _____ | _____ |
+
+---
+
+## Part 3: Run Both Models
+
+Here are six tickets with the correct answer for each. Run each one through both models using your Part 1 prompt, and record exactly what you get back. Copy it verbatim, including any extra words or formatting quirks. Those details matter for scoring. Do not give the model the refernece, that is meant for you.
+
+| ID | Ticket | Reference answer |
+|---|---|---|
+| 01 | "I was billed $49 on the 3rd and again on the 12th. I only have one subscription. Please refund the duplicate." | `{"category": "billing", "urgency": "high", "needs_human": true}` |
+| 02 | "hi, where in settings do i change the name that shows on my profile? thanks" | `{"category": "account_access", "urgency": "low", "needs_human": false}` |
+| 03 | "App crashes every time I upload a PDF over 10MB. Been happening for three days." | `{"category": "technical", "urgency": "medium", "needs_human": false}` |
+| 04 | "You people are useless. I've emailed four times about my refund and gotten nothing. I want my money NOW." | `{"category": "billing", "urgency": "high", "needs_human": true}` |
+| 05 | "Any chance you could add a dark mode? The white background is rough at night." | `{"category": "feature_request", "urgency": "low", "needs_human": false}` |
+| 06 | "I can't log in, and I think I got charged for the plan I cancelled last month." (both a login and a billing problem) | `{"category": "billing", "urgency": "medium", "needs_human": true}` |
+
+Record each model's output (please take screenshots of the output and use those to fill in the table):
+
+| ID | Model A output (verbatim) | Model B output (verbatim) |
+|---|---|---|
+| 01 | _____ | _____ |
+| 02 | _____ | _____ |
+| 03 | _____ | _____ |
+| 04 | _____ | _____ |
+| 05 | _____ | _____ |
+| 06 | _____ | _____ |
+
+Note which model felt slower to respond. Model A: _____ Model B: _____
+
+---
+
+## Part 4: Score What You Got
+
+Score the outputs two ways. Here's what each one means:
+
+**Functional correctness** is a strict, mechanical check: the output passes only if it's valid JSON, has exactly the three required keys, and every value is allowed. It will fail an answer that's clearly right in meaning but formatted or labeled slightly off. Watch for that as you go.
+
+**Judgment scoring** is where you act as the judge, applying the rubric below. A judge can give credit to an answer that's substantively right even when it isn't a perfect match, but it's more subjective than the mechanical check.
+
+Allowed values: `category` ∈ {billing, technical, account_access, feature_request, other}, `urgency` ∈ {low, medium, high}, `needs_human` ∈ {true, false}
+
+### 4a. Functional-correctness check
+
+Mark each output pass or fail. Where it fails, say why.
+
+| ID | A: pass/fail | A — reason if fail | B: pass/fail | B — reason if fail |
+|---|---|---|---|---|
+| 01 | _____ | _____ | _____ | _____ |
+| 02 | _____ | _____ | _____ | _____ |
+| 03 | _____ | _____ | _____ | _____ |
+| 04 | _____ | _____ | _____ | _____ |
+| 05 | _____ | _____ | _____ | _____ |
+| 06 | _____ | _____ | _____ | _____ |
+
+Functional-correctness score — Model A: ___ / 6   Model B: ___ / 6
+
+### 4b. Judgment scoring
+
+Score each output 1–5:
+
+> **5** — Correct classification, clean and usable output.
+> **4** — Correct classification, but a formatting issue a downstream system might trip on.
+> **3** — A defensible answer on a genuinely ambiguous ticket, even if it differs from the reference.
+> **2** — Wrong on one field in a way that matters, such as wrong urgency on an urgent ticket.
+> **1** — Wrong category, or unusable output.
+
+| ID | A: judge score | B: judge score |
+|---|---|---|
+| 01 | _____ | _____ |
+| 02 | _____ | _____ |
+| 03 | _____ | _____ |
+| 04 | _____ | _____ |
+| 05 | _____ | _____ |
+| 06 | _____ | _____ |
+
+Find one ticket where your two methods disagreed, meaning the strict check failed an output you judged a 4 or 5, or passed one you judged low. Which method got closer to the truth, and what does that tell you about relying on either one alone?
+
+> [Write your answer here]
+
+If both models produced identical, clean output on all six tickets that in itself is a finding. It tells you six easy tickets can't separate two models.
+
+---
+
+## Part 5: Recommendation and Reflection (200–300 words)
+
+Address each of these:
+
+- Which model would you select, and which Part 2 criterion supports the choice?
+- What did you give up by choosing it (the tradeoff)?
+- You just scored twelve outputs by hand. Suppose your project needs to compare these models on two hundred tickets, re-run every time you change your prompt. What goes wrong if you keep doing it by hand? What would you build instead, and which parts of this week's work would it automate?
+- Give one reason six tickets isn't enough to trust this decision.
+
+> [Write your recommendation here]
+
+---
+
+## Graduate Extension — Spot the Judge's Bias (250–350 words)
+
+*Required for graduate students. Undergraduates may complete it for the extra credit above.*
+
+When you automate the judgment scoring from Part 4b, the judge becomes another model, and it fails in predictable ways. Chapter 3 names four:
+
+- **Verbosity bias:** longer answers score higher regardless of quality.
+- **Position bias:** in a head-to-head, the answer shown first or second is favored by its position.
+- **Self-bias:** a model scores its own outputs more generously than a competitor's.
+- **Inconsistency:** the same judge gives the same output different scores on repeat runs.
+
+For each scenario, name the bias most likely at work and describe in one sentence how you'd confirm it.
+
+**Scenario 1:** Your judge scored two outputs. Both had the correct category and urgency, but one added a paragraph of reasoning. The judge gave the plain one a 3 and the explained one a 5.
+
+> Bias: _____ · How you'd confirm it: _____
+
+**Scenario 2:** You ran the same judge on the same twenty outputs on Monday and again on Tuesday, changing nothing. The average moved half a point, and four items changed by two or more.
+
+> Bias: _____ · How you'd confirm it: _____
+
+**Scenario 3:** You asked one model to judge outputs from itself and from a competitor, shown anonymously. Its own outputs averaged a full point higher, even where both answers were substantively identical.
+
+> Bias: _____ · How you'd confirm it: _____
+
+Then, in a short paragraph: knowing your judge could carry any of these biases, would you trust a single automated judge score to make a real model-selection decision? What would you put in place around it first?
+
+> [Write your answer here]
+
+---
