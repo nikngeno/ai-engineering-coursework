@@ -31,8 +31,8 @@ Choose two models that differ in a way worth comparing: two sizes, two providers
 
 | | Model | Provider | Why you picked it |
 |---|---|---|---|
-| Model A | Anthropic | Claude Sonnet 5.5 | I chose it as the larger, more capable model to see how well it handles the classification task and follows the required JSON format. |
-| Model B | Meta | Llama 3.2 3B Instruct | I chose it because it is a much smaller 3B model, which lets me compare whether a smaller model can perform as well as a larger model on a simple classification task. |
+| Model A | Claude Sonnet 5.5 | Anthropic | I chose it as the larger, more capable model to see how well it handles the classification task and follows the required JSON format. |
+| Model B | Llama 3.2 3B Instruct | Meta | I chose it because it is a much smaller 3B model, which lets me compare whether a smaller model can perform as well as a larger model on a simple classification task. |
 
 Write one prompt for the task and use it, unchanged, for both models on every ticket. If the prompt varies between models, you won't know whether a difference in results came from the model or the prompt. Keep the prompt simple; tuning it isn't the goal this week as that will be part of our next weeks topic. You will need to include enough details though that the model knows what should be returned, given a support ticket.
 
@@ -84,7 +84,7 @@ Here are six tickets with the correct answer for each. Run each one through both
 
 Record each model's output (please take screenshots of the output and use those to fill in the table):
 
-| ID | Model A output (verbatim) | Model B output (verbatim) |
+| ID | Claude Sonnet 5.5  (verbatim) | Llama 3.2 3B Instruct output (verbatim) |
 |---|---|---|
 | 01 | {"category": "billing", "urgency": "medium", "needs_human": true} | {"category": "technical","urgency": "low","needs_human": true} |
 | 02 | {"category": "other", "urgency": "low", "needs_human": false} | {"category": "other","urgency": "low","needs_human": true} |
@@ -111,7 +111,7 @@ Allowed values: `category` ∈ {billing, technical, account_access, feature_requ
 
 Mark each output pass or fail. Where it fails, say why.
 
-| ID | A: pass/fail | A — reason if fail | B: pass/fail | B — reason if fail |
+| ID | Claude Sonnet 5.5 : pass/fail | Claude Sonnet 5.5 — reason if fail | Llama 3.2 3B Instruct: pass/fail | Llama 3.2 3B Instruct — reason if fail |
 |---|---|---|---|---|
 | 01 | Pass | _____ | Pass | _____ |
 | 02 | Pass | _____ | Pass | _____ |
@@ -120,7 +120,7 @@ Mark each output pass or fail. Where it fails, say why.
 | 05 | Pass | _____ | Pass | _____ |
 | 06 | Pass | _____ | Pass | _____ |
 
-Functional-correctness score — Model A: 6 / 6   Model B: 6 / 6
+Functional-correctness score — Claude Sonnet 5.5: 6 / 6   Llama 3.2 3B Instruct: 6 / 6
 
 ### 4b. Judgment scoring
 
@@ -132,7 +132,7 @@ Score each output 1–5:
 > **2** — Wrong on one field in a way that matters, such as wrong urgency on an urgent ticket.
 > **1** — Wrong category, or unusable output.
 
-| ID | A: judge score | B: judge score |
+| ID | Claude Sonnet 5.5 : judge score | Llama 3.2 3B Instruct: judge score |
 |---|---|---|
 | 01 | 2 | 1 |
 | 02 | 1 | 1 |
