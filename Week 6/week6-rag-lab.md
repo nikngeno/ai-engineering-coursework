@@ -1,4 +1,6 @@
-**Name:** Nicholas Ngeno
+# Day 2: Document Q&A with RAG
+
+**Name:** Nicholas Ngeno  
 **Link to your completed Kaggle notebook:** https://www.kaggle.com/code/nikngeno/day-2-document-q-a-with-rag-nick
 
 ---
@@ -40,7 +42,8 @@ Record what the pipeline uses:
 | Generation model | gemini-3.8-flash |
 | Number of passages retrieved per query | 1 |
 
-**In 2–3 sentences, describe what happens between the moment a question is asked and the moment an answer comes back:** 
+**In 2–3 sentences, describe what happens between the moment a question is asked and the moment an answer comes back:**
+
 When a user asks a question, the question is converted into an embedding and compared with the document embeddings stored in ChromaDB. The most relevant passages are retrieved and added to the prompt, and Gemini then uses that context to generate an answer.
 
 ---
@@ -51,7 +54,7 @@ In your copy of the notebook, **replace the sample documents with 3–5 short do
 
 Keep the rest of the pipeline the same. Your notebook should show your documents, your questions, and the outputs.
 
-**Your documents:**
+### Your Documents
 
 | | Value |
 |---|---|
@@ -73,8 +76,12 @@ Write **5 test questions** and run each through the pipeline. Your set must incl
 | 4 | What information should MealScout show before someone decides to place an order? | Paraphrase | Yes | Correct |
 | 5 | What payment processor will MealScout use for online orders? | Unanswerable | N/A | Correctly declined |
 
-**Pick one question where the result wasn't fully correct (or, if everything worked, the one that came closest to failing). Was the weak point retrieval or generation? How can you tell from the notebook's output?** _____
+### Weakest Result
+
+**Pick one question where the result wasn't fully correct (or, if everything worked, the one that came closest to failing). Was the weak point retrieval or generation? How can you tell from the notebook's output?**
+
 The question that came closest to failing was, “What payment processor will MealScout use for online orders?” The weak point was retrieval because the documents did not contain any information about a payment processor, but ChromaDB still returned the passage about placing a takeout order because it was the closest semantic match. I could tell this from the notebook output because the retrieved passage discussed ordering but did not actually answer the question.
+
 ---
 
 ## Part 3: Reflection (30 pts, 250–350 words)
@@ -86,7 +93,8 @@ Answer all four:
 - The codelab was designed to work well on its own sample documents. What, if anything, got harder when you switched to yours?
 - Your project evaluation plan is due next week with Milestone 1. Does your project need RAG? If so, what would the documents be, and if not, why not?
 
-**Your reflection:**
+### Your Reflection
+
 The codelab uses an embedding-based retriever. Each document and query is converted into an embedding, and ChromaDB retrieves the passage that is most semantically similar to the question. A term-based retriever might have performed better on some of my keyword questions, such as the question about “5 miles” or “estimated tax,” because those exact terms appear in the documents. However, it would probably perform worse on paraphrase questions where the wording of the question is different from the wording in the document. The embedding-based approach was able to recognize similarity in meaning even when the exact words were different.
 
 The unanswerable question asked which payment processor MealScout will use. None of my documents contained that information, but the retriever still returned the passage about placing a takeout order because it was the closest match. In a real application, this could become a problem if the generation model treats a related passage as evidence and invents an answer. I would reduce this risk by adding instructions that the model should only answer when the retrieved context supports the answer and should clearly say when there is not enough information. I could also use a similarity threshold to reject weak retrieval results.
@@ -94,4 +102,3 @@ The unanswerable question asked which payment processor MealScout will use. None
 When I replaced the original Googlecar documents with my MealScout documents, retrieval became slightly harder because several documents discussed related concepts such as price, ordering, location, and restaurant selection. This made some passages semantically similar even when only one directly answered the question.
 
 MealScout could use RAG, but it should not depend on RAG for everything. RAG would be useful for restaurant menus, dietary information, ordering policies, and other text-based information. Current prices, distance, availability, and taxes should instead come from live APIs or other current data sources.
-
