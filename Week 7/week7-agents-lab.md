@@ -1,22 +1,8 @@
 # Week 7 Assignment — Agents Course + Your Own Agent
 
-**Chapter:** Huyen, *AI Engineering*, Ch. 6 — Agents & Memory (pg. 275–305)
-**External lesson:** Hugging Face *AI Agents Course*, Unit 1: Introduction to Agents — https://huggingface.co/learn/agents-course/unit1
-**Points:** 100
-**Due:** End of Week 7
-
----
-
-## Submission Instructions
-
-1. Copy this file into your Assignment 1 repo, keeping the filename **`week7-agents-lab.md`**.
-2. Fill in every blank (`_____`) and bracketed placeholder directly in the file.
-3. Make sure your Hugging Face Space is public so I can open it.
-4. Push your commit, then submit a link to the file as instructed for this course.
-
-**Name:** Nicholas Ngeno
-**Link to your Hugging Face Space:** https://huggingface.co/spaces/nikngeno/nik_agent
-**Link to (or screenshot of) your Unit 1 certificate:** https://huggingface.co/spaces/agents-course/unit_1_quiz/discussions/771
+- **Name:** Nicholas Ngeno
+- **Link to your Hugging Face Space:** https://huggingface.co/spaces/nikngeno/nik_agent
+- **Link to (or screenshot of) your Unit 1 certificate:** https://huggingface.co/spaces/agents-course/unit_1_quiz/discussions/771
 
 ---
 
@@ -182,42 +168,3 @@ My MealScout project could benefit from an agent because finding a meal under a 
 
 ---
 
-## Part 5: Graduate Extension — MCP Fundamentals (15 pts)
-
-*Graduate students required. Undergraduates are encouraged to read Unit 1 as optional background.*
-
-Complete **Unit 1 of Hugging Face's MCP Course** (MCP Fundamentals, Architecture and Core Concepts) — https://huggingface.co/learn/mcp-course/unit1/introduction — and take its end-of-unit quiz.
-
-**Link to (or screenshot of) your MCP Unit 1 quiz result:** Not required — undergraduate submission.
-
-In 200–300 words: look at the tools your agent uses. Which of them, if any, would make more sense exposed through an MCP server instead of defined directly in the agent's code? What would you gain (reuse, access to live systems, other clients using the same tools), and what would you give up (setup, security, trust in the server)? Tie your answer to the host / client / server roles from the unit.
-
-**Your analysis:** Not required — undergraduate submission.
-
----
-
-## Grading
-
-| Component | Undergraduate | Graduate |
-|---|---|---|
-| Unit 1 and certificate (Part 1) | 25 pts | 20 pts |
-| Build your agent (Part 2) | 40 pts | 35 pts |
-| Failure analysis (Part 3) | 15 pts | 15 pts |
-| Reflection (Part 4) | 20 pts | 15 pts |
-| Graduate extension (Part 5) | — | 15 pts |
-| **Total** | **100 pts** | **100 pts** |
-
-### Rubric
-
-| Level | Criteria |
-|---|---|
-| **Full credit** | Certificate earned, and the Think → Act → Observe explanation uses the student's own agent. The public Space runs with at least 2 tools, including a working custom tool with a clear description. All 3 tasks are logged, and at least one uses two tools together. The failure is backed by a log excerpt, categorized correctly with reasoning, and paired with a specific fix. Reflection connects the student's own results to Huyen Ch. 6. |
-| **Partial credit** | Certificate missing, or the Space doesn't run. Only pre-made tools are used, or the custom tool doesn't work. Fewer than 3 tasks, or tasks that need only a single step. The failure is described without a log, not categorized, or the fix is vague. Reflection restates the chapter instead of the results. |
-| **No credit** | Not submitted, the Space link doesn't work or is private, or results appear fabricated (e.g., logs that don't match what the Space produces). |
-
----
-
-## A Note on Scope
-
-eekweek7-agents-labeek
-Also note: **Project Milestone 1 is due this week.** Unit 1 is a big unit, so start early in the week and don't leave the course and the milestone for the same night.
