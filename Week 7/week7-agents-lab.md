@@ -6,48 +6,17 @@
 
 ---
 
-## Overview
-
-This week you'll work through the first unit of Hugging Face's free AI Agents Course, then build on it. Unit 1 covers what agents are, how LLMs act as an agent's "brain," how agents use tools, and the Think → Act → Observe cycle. It ends with building a first agent using `smolagents`, publishing it as a Hugging Face Space, and taking a quiz that earns the course's **Certificate of Fundamentals of Agents**.
-
-Then you'll make the agent your own: give it tools that do something you care about, push it on multi-step tasks, and study how it fails.
-
-## Learning Objectives
-
-- Explain how an agent plans, calls tools, and uses observations to decide its next step.
-- Build a working agent with multiple tools, including one you write yourself.
-- Identify and categorize agent failures using the failure modes in Huyen Ch. 6.
-- Decide whether an agent (as opposed to RAG or a single prompt) is the right design for a given problem.
-
----
-
-## Setup
-
-1. Create a free Hugging Face account if you don't have one.
-2. Start at the Unit 1 link above and work through the unit in order.
-3. When you reach the hands-on tutorial ("Let's Create Our First Agent Using smolagents"), duplicate the template Space as instructed and follow along.
-
-If you store any access token or API key, add it as a **Space secret**, never in your code. Your Space is public, and anyone can read its files.
-
----
-
 ## Part 1: Complete Unit 1 and Earn the Certificate (25 pts)
 
-Work through all of Unit 1, including the tutorial, and **pass the end-of-unit quiz** to earn the Certificate of Fundamentals of Agents. Follow the quiz link in the course itself, since the certification app has moved before.
+**In 2–3 sentences, explain the Think → Act → Observe cycle in your own words, using something your agent actually did as the example:**
 
-Put the certificate link or screenshot at the top of this file.
+The Think → Act → Observe cycle means the agent decides what to do, calls a tool, and uses the result to choose its next step. My agent called plan_study_sessions to check whether 12 study hours could fit into 3 days with a 3-hour daily limit. The tool returned 4 hours per day and marked the plan infeasible, but the agent then used the wrong dictionary key to read the result, causing an error.
 
-**In 2–3 sentences, explain the Think → Act → Observe cycle in your own words, using something your agent actually did as the example:** The Think → Act → Observe cycle means the agent decides what to do, calls a tool, and uses the result to choose its next step. My agent called plan_study_sessions to check whether 12 study hours could fit into 3 days with a 3-hour daily limit. The tool returned 4 hours per day and marked the plan infeasible, but the agent then used the wrong dictionary key to read the result, causing an error.
 ---
 
 ## Part 2: Build Your Agent (40 pts)
 
-> Working submission copy. Local runs use Ollama `llama3.2:3b`. The public Space and any hosted-model results still need verification. Review the reflection to ensure it matches your own experience of the reading and course.
-
-Extend the agent in your duplicated Space so that it has:
-
-- **At least 2 tools** in total
-- **At least 1 custom tool that you write yourself** (not a pre-made one). Tools related to your term project are recommended, but anything useful works: a unit converter, a calculator for a formula from another class, a lookup over a small dataset, a text formatter, etc.
+The study-planning agent uses local Ollama `llama3.2:3b` with `plan_study_sessions`, `get_current_time_in_timezone`, and `final_answer`. The results below are from local execution; the public Space has not been verified.
 
 **Your custom tool:**
 
@@ -57,7 +26,7 @@ Extend the agent in your duplicated Space so that it has:
 | What it does | Divides study hours across available days, checks the daily limit, and reports whether the work fits. |
 | Inputs and output | Inputs: `total_hours` (float), `days_available` (positive int), `max_hours_per_day` (float). Output: dictionary containing `hours_per_day`, `capacity_hours`, `shortfall_hours`, `feasible`, and the supplied hours/days. |
 
-Paste your custom tool's code here:
+**Custom tool code:**
 
 ```python
 import math
@@ -97,30 +66,29 @@ def plan_study_sessions(total_hours: float, days_available: int, max_hours_per_d
 
 ```
 
-**What did you write in the tool's name, description, and argument descriptions to help the agent know when and how to use it? Did you have to revise them?** The name describes the action: planning study sessions. The description says it calculates workloads and checks capacity, and explicitly says it does not create calendar events. The argument descriptions specify hours rather than minutes, positive whole days, and whether today counts. Yes, the description needed revision. In the initial run, the agent indexed a nonexistent workload key even though the tool returned `hours_per_day`. I revised the return description to list every exact dictionary key and identify `hours_per_day` as the workload. The other registered tool, `get_current_time_in_timezone`, supplies the current local date/time.
+**What did you write in the tool's name, description, and argument descriptions to help the agent know when and how to use it? Did you have to revise them?**
 
-Now give your agent **3 multi-step tasks**, meaning tasks that require more than one tool call or more than one step to complete. At least one task should require using **two different tools** together.
+The name describes the action: planning study sessions. The description says it calculates workloads and checks capacity, and explicitly says it does not create calendar events. The argument descriptions specify hours rather than minutes, positive whole days, and whether today counts. Yes, the description needed revision. In the initial run, the agent indexed a nonexistent workload key even though the tool returned `hours_per_day`. I revised the return description to list every exact dictionary key and identify `hours_per_day` as the workload. The other registered tool, `get_current_time_in_timezone`, supplies the current local date/time.
+
+**Multi-step task results:**
 
 | # | Task (short) | Tools the agent called, in order | Number of steps | Succeeded? (yes / partly / no) |
 |---|---|---|---|---|
-| 1 | Compare 12 hours across 3 days versus 6 days, with a 3-hour daily limit. | None in hosted retry: model request rejected before code generation | 1 attempted action; 0 tool calls | No |
-| 2 | Read Los Angeles time, calculate the deadline four days later, and plan 8 hours across four study days. | None: model request rejected before code generation | 1 attempted action; 0 tool calls | No |
-| 3 | Test 15 hours across 3 days at 4 hours/day, then revise to 5 days if needed. | None: model request rejected before code generation | 1 attempted action; 0 tool calls | No |
+| 1 | Compare 12 hours across 3 days versus 6 days, with a 3-hour daily limit. | `plan_study_sessions` in initial local Llama run; then invalid-key error | 1 observed action step; 1 tool call before interruption | Partly: first calculation correct; comparison unfinished |
+| 2 | Read Los Angeles time, calculate the deadline four days later, and plan 8 hours across four study days. | None in earlier local Llama retry: request timed out | 1 attempted action; 0 tool calls | No: request timed out |
+| 3 | Test 15 hours across 3 days at 4 hours/day, then revise to 5 days if needed. | No local Llama execution evidence recorded for this prompt | Not established | Not yet evaluated locally |
 
 ---
 
-> These rows report actual hosted attempts using `Qwen/Qwen3-Coder-30B-A3B-Instruct`; see `agent_app/hosted_lab_runs/task1.json` through `task3.json`. Hugging Face rejected each request because the model was unsupported by the account's enabled providers. Local retries of tasks 1 and 2 timed out. The initial local task 1 run did execute `plan_study_sessions` once before the KeyError analyzed below. No completed run has yet demonstrated two different tools together. Resolve model access, rerun all three prompts, and replace this table with those logs before submitting for full credit.
+Task 1 is documented in `agent_app/failure-observed.txt`; task 2 is documented in `agent_app/lab_runs/task2.json`.
+
+**Additional completed local run:** For “Plan 6 hours of studying over 3 days, with a maximum of 3 hours per day,” the agent called `plan_study_sessions` → `get_current_time_in_timezone` → `plan_study_sessions`. Step 4 had a code-format error; step 5 recovered with `final_answer`. The result was correct: 2 hours per day for 3 days. The clock lookup and repeated calculation were unnecessary, and the final answer had a minor formatting defect. The run took five action steps. Its log is saved in `agent_app/local-study-plan-console.txt`.
 
 ## Part 3: Failure Analysis (15 pts)
 
-Find **one clear failure**. If none of your tasks failed, try to make the agent fail: give it an ambiguous request, a task no tool can handle, bad input for your custom tool, or a task that needs many steps.
-
-Paste the relevant part of the agent's step log here (trim it to the steps that matter):
+**Relevant step log (initial local Llama run, before the tool-description revision):**
 
 ```
-Actual excerpt from the initial local llama3.2:3b run of task1 (before the tool description revision).
-Copied from lab-run-console.txt; formatting shortened to the code and error that matter.
-
 Step 1 executed:
 plan_1 = plan_study_sessions(total_hours=12, days_available=3, max_hours_per_day=3)
 print("Plan 1:")
@@ -132,19 +100,21 @@ Code execution failed: Could not index {'total_hours': 12, 'days_available': 3,
 'hours_per_day': 4.0, 'capacity_hours': 9, 'shortfall_hours': 3, 'feasible': False}
 with 'daily\tworkload': KeyError: 'daily\tworkload'
 
-The model also wrote plan_2['daily_workload'] later in the same code block,
-but execution stopped at the first KeyError, before the second tool call.
-The first action step took 220.25 seconds. This excerpt demonstrates the error,
-not the eventual outcome of that interrupted initial run.
-
 ```
 
-**What went wrong?** The initial comparison run called the correct tool, but then tried to read a dictionary key that the tool does not return. The tool calculated 4 hours/day, 9 hours of capacity, and a 3-hour shortfall correctly. The generated Python raised a KeyError while trying to display the workload, so that code block stopped before it reached the second tool call. This excerpt shows a failed action step, not the outcome of a completed run.
+**What went wrong?**
 
-**Which kind of failure is it, using the categories in Huyen Ch. 6? Explain why it fits that category.** This is a planning failure in the generated execution code: the agent chose an invalid field when interpreting a tool result. It is closest to Huyen's wrong-parameter/invalid-tool-use examples, although the specific mistake is an output-field lookup rather than a bad input argument. It is not a numerical bug in the tool, because the returned calculation was correct. Huyen separates planning failures from tool failures and efficiency issues in her [Agents chapter adaptation](https://huyenchip.com/2025/01/07/agents.html).
+The initial comparison run called the correct tool, but then tried to read a dictionary key that the tool does not return. The tool calculated 4 hours/day, 9 hours of capacity, and a 3-hour shortfall correctly. The generated Python raised a KeyError while trying to display the workload, so that code block stopped before it reached the second tool call. This excerpt shows a failed action step, not the outcome of a completed run.
 
-**What change would you make to prevent it (tool description, prompt, a new tool, a limit on steps, etc.)?** I revised the return description to list the exact output keys, especially `hours_per_day`. I would also have the agent print and inspect the returned dictionary before extracting fields. A short example using `result['hours_per_day']` would make the interface clearer. The shorter system prompt reduces unrelated examples and preserves the code/observation loop. A fresh run is needed to establish whether these changes prevent recurrence; a description change alone is not proof of a fix.
+**Which kind of failure is it, using the categories in Huyen Ch. 6? Explain why it fits that category.**
 
+This is a planning failure in the generated execution code: the agent chose an invalid field when interpreting a tool result. It is closest to Huyen's wrong-parameter/invalid-tool-use examples, although the specific mistake is an output-field lookup rather than a bad input argument. It is not a numerical bug in the tool, because the returned calculation was correct. Huyen separates planning failures from tool failures and efficiency issues in her [Agents chapter adaptation](https://huyenchip.com/2025/01/07/agents.html).
+
+**What change would you make to prevent it (tool description, prompt, a new tool, a limit on steps, etc.)?**
+
+I revised the return description to list the exact output keys, especially `hours_per_day`. I would also have the agent print and inspect the returned dictionary before extracting fields. A short example using `result['hours_per_day']` would make the interface clearer. The shorter system prompt reduces unrelated examples and preserves the code/observation loop.
+
+The later 6-hour run returned the correct result without an invalid-key lookup. Because it used a different prompt, it does not establish that the original comparison task is fixed.
 ---
 
 ## Part 4: Reflection (20 pts, 250–350 words)
@@ -156,7 +126,7 @@ Answer all four:
 - Last week you built a RAG pipeline. For a question like "what does our policy say about X?" versus "book me a meeting with X," which design fits each, and why?
 - Your Milestone 1 is due this week. Would your project benefit from being an agent, or is a simpler design better? Justify your answer.
 
-**Your reflection:**
+**Reflection:**
 
 The Hugging Face course presents agents through the Think, Act, Observe cycle, while Huyen explains the larger design choices behind planning, tool selection, and evaluation. The course's code-and-observation format makes the handoff concrete: the model proposes Python, a tool executes it, and the returned observation becomes evidence for the next decision. Huyen's distinction between planning failures and tool failures helps explain why a correct calculation can still lead to a failed agent step.
 
@@ -167,4 +137,3 @@ For a question such as “what does our policy say about X?”, RAG fits because
 My MealScout project could benefit from an agent because finding a meal under a budget may require restaurant search, menu lookup, distance checking, and total-cost calculation. Different results may require different next steps. However, I would start with a controlled menu dataset and a small, predictable workflow. RAG could support menu and policy questions, while deterministic tools check prices and constraints. Missing dietary information should remain unknown, and the user should confirm an order before any purchase action. This keeps the first version manageable while preserving a reason for tool use.
 
 ---
-
